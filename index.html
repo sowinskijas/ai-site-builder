@@ -958,10 +958,57 @@
 
     <!-- Sidebar -->
     <div class="sidebar">
-      <div class="sidebar-header">History</div>
-      <div class="history-list" id="history-list"></div>
-      <div class="sidebar-new">
-        <button id="sidebar-new-btn">+ New site</button>
+      <div class="sidebar-tabs">
+        <button class="sidebar-tab active" id="stab-edit">Edit</button>
+        <button class="sidebar-tab" id="stab-history">History</button>
+      </div>
+
+      <!-- Edit panel -->
+      <div class="edit-panel visible" id="edit-panel">
+        <!-- No site yet -->
+        <div class="edit-no-site" id="edit-no-site">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
+            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+          <p>Generate a site first, then come back here to edit it.</p>
+        </div>
+
+        <!-- Chat messages -->
+        <div class="edit-messages" id="edit-messages" style="display:none;"></div>
+
+        <!-- Quick suggestions -->
+        <div class="edit-suggestions" id="edit-suggestions" style="display:none;">
+          <button class="edit-suggestion">Make it dark mode</button>
+          <button class="edit-suggestion">Add a pricing section</button>
+          <button class="edit-suggestion">Change font to serif</button>
+          <button class="edit-suggestion">Make the hero bigger</button>
+          <button class="edit-suggestion">Add a contact form</button>
+          <button class="edit-suggestion">Make colors bolder</button>
+        </div>
+
+        <!-- Input -->
+        <div class="edit-input-area" id="edit-input-area" style="display:none;">
+          <div class="edit-input-row">
+            <textarea
+              id="edit-textarea"
+              class="edit-textarea"
+              placeholder="Make the header dark blue, add a FAQ section…"
+              rows="1"
+            ></textarea>
+            <button class="edit-send-btn" id="edit-send-btn">
+              <svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2L15 22 11 13 2 9l20-7z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- History panel -->
+      <div class="history-panel" id="history-panel" style="display:none;">
+        <div class="history-list" id="history-list"></div>
+        <div class="sidebar-new">
+          <button id="sidebar-new-btn">+ New site</button>
+        </div>
       </div>
     </div>
 
