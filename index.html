@@ -1623,6 +1623,12 @@ The final result should be indistinguishable from a real, live professional webs
     document.getElementById('code-pre').textContent = '';
     topbarPrompt.focus();
     document.querySelectorAll('.history-item').forEach(el => el.classList.remove('active'));
+    // Reset edit panel
+    document.getElementById('edit-no-site').style.display = 'flex';
+    document.getElementById('edit-messages').style.display = 'none';
+    document.getElementById('edit-messages').innerHTML = '';
+    document.getElementById('edit-suggestions').style.display = 'none';
+    document.getElementById('edit-input-area').style.display = 'none';
   }
 
   // ── Toast ──
