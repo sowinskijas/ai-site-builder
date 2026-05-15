@@ -1518,6 +1518,12 @@ The final result should be indistinguishable from a real, live professional webs
       renderPreview(currentCode);
       saveToHistory(prompt, currentCode);
       renderHistory();
+      showEditReady();
+      // Switch to Edit tab automatically
+      document.getElementById('stab-edit').classList.add('active');
+      document.getElementById('stab-history').classList.remove('active');
+      document.getElementById('edit-panel').style.display = 'flex';
+      document.getElementById('history-panel').style.display = 'none';
 
     } catch (err) {
       setGenerating(false);
