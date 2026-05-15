@@ -1148,6 +1148,184 @@
   document.getElementById('btn-new').addEventListener('click', newSite);
   document.getElementById('sidebar-new-btn').addEventListener('click', newSite);
 
+  // ── Sidebar tabs ──
+  document.getElementById('stab-edit').addEventListener('click', () => {
+    document.getElementById('stab-edit').classList.add('active');
+    document.getElementById('stab-history').classList.remove('active');
+    document.getElementById('edit-panel').style.display = 'flex';
+    document.getElementById('history-panel').style.display = 'none';
+  });
+
+  document.getElementById('stab-history').addEventListener('click', () => {
+    document.getElementById('stab-history').classList.add('active');
+    document.getElementById('stab-edit').classList.remove('active');
+    document.getElementById('history-panel').style.display = 'flex';
+    document.getElementById('edit-panel').style.display = 'none';
+    renderHistory();
+  });
+
+  // ── Edit panel ──
+  const editTextarea = document.getElementById('edit-textarea');
+  const editSendBtn  = document.getElementById('edit-send-btn');
+
+  // Auto-grow textarea
+  editTextarea.addEventListener('input', () => {
+    editTextarea.style.height = 'auto';
+    editTextarea.style.height = Math.min(editTextarea.scrollHeight, 120) + 'px';
+  });
+
+  editTextarea.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      submitEdit();
+    }
+  });
+
+  editSendBtn.addEventListener('click', submitEdit);
+
+  // Quick suggestion chips
+  document.querySelectorAll('.edit-suggestion').forEach(btn => {
+    btn.addEventListener('click', () => {
+      editTextarea.value = btn.textContent;
+      submitEdit();
+    });
+  });
+
+  function showEditReady() {
+    document.getElementById('edit-no-site').style.display = 'none';
+    document.getElementById('edit-messages').style.display = 'flex';
+    document.getElementById('edit-suggestions').style.display = 'flex';
+    document.getElementById('edit-input-area').style.display = 'block';
+  }
+
+  function addEditMessage(role, text, state) {
+    const msgs = document.getElementById('edit-messages');
+    const el = document.createElement('div');
+    el.className = 'edit-msg ' + role + (state ? ' ' + state : '');
+
+    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    if (role === 'user') {
+      el.innerHTML = `
+        <div class="edit-msg-bubble">${escapeHtml(text)}</div>
+        <div class="edit-msg-time">${time}</div>
+      `;
+    } else {
+      const icon = state === 'applying'
+        ? `<div class="edit-spinner"></div>`
+        : `<svg class="edit-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`;
+      el.innerHTML = `
+        <div class="edit-msg-bubble">${icon}<span>${escapeHtml(text)}</span></div>
+        <div class="edit-msg-time">${time}</div>
+      `;
+    }
+
+    msgs.appendChild(el);
+    msgs.scrollTop = msgs.scrollHeight;
+    return el;
+  }
+
+  async function submitEdit() {
+    const instruction = editTextarea.value.trim();
+    if (!instruction) return;
+    if (!currentCode) { showToast('Generate a site first.'); return; }
+    if (isGenerating) return;
+
+    editTextarea.value = '';
+    editTextarea.style.height = 'auto';
+    editSendBtn.disabled = true;
+
+    addEditMessage('user', instruction);
+    const responseEl = addEditMessage('assistant', 'Applying your change…', 'applying');
+
+    isGenerating = true;
+
+    const editSystem = `You are an expert web developer. You will receive a complete HTML website and an edit instruction. Apply ONLY the requested change and return the complete updated HTML.
+
+Rules:
+- Output ONLY raw HTML — no markdown fences, no explanation, no commentary
+- Preserve all existing content, sections, and functionality unless the edit explicitly changes them
+- Keep the same overall design and color palette unless told to change it
+- Apply the edit precisely — don't add unrequested sections or remove existing ones
+- The output must be a complete, self-contained HTML document`;
+
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 16000,
+          stream: true,
+          system: editSystem,
+          messages: [{
+            role: 'user',
+            content: `Current website HTML:\n\n${currentCode}\n\n---\n\nEdit instruction: ${instruction}`,
+          }],
+        }),
+      });
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        const msg = err?.error?.message || 'API error ' + response.status;
+        throw new Error(response.status === 401 ? 'Invalid API key.' : msg);
+      }
+
+      const reader  = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let newCode = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop();
+
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const data = line.slice(6).trim();
+          if (data === '[DONE]') continue;
+          try {
+            const parsed = JSON.parse(data);
+            if (parsed.type === 'content_block_delta' && parsed.delta?.type === 'text_delta') {
+              newCode += parsed.delta.text;
+            }
+          } catch {}
+        }
+      }
+
+      if (!newCode) throw new Error('No content returned. Try again.');
+
+      newCode = newCode
+        .replace(/^```html\s*/i, '')
+        .replace(/^```\s*/i, '')
+        .replace(/\s*```$/, '')
+        .trim();
+
+      currentCode = newCode;
+      renderPreview(currentCode);
+
+      // Update response bubble to success state
+      responseEl.className = 'edit-msg assistant';
+      responseEl.querySelector('.edit-msg-bubble').innerHTML =
+        `<svg class="edit-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span>Done! Change applied.</span>`;
+
+    } catch (err) {
+      responseEl.querySelector('.edit-msg-bubble').innerHTML =
+        `<span style="color:#dc2626">Error: ${escapeHtml(err.message)}</span>`;
+    }
+
+    isGenerating = false;
+    editSendBtn.disabled = false;
+  }
+
   document.getElementById('btn-download').addEventListener('click', () => {
     if (!currentCode) { showToast('Nothing to download yet.'); return; }
     const blob = new Blob([currentCode], { type: 'text/html' });
