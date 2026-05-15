@@ -394,7 +394,7 @@
 
     /* Sidebar */
     .sidebar {
-      width: 280px;
+      width: 300px;
       background: var(--white);
       border-right: 1px solid var(--border);
       display: flex;
@@ -403,14 +403,37 @@
       overflow: hidden;
     }
 
-    .sidebar-header {
-      padding: 16px;
+    /* Sidebar tab bar */
+    .sidebar-tabs {
+      display: flex;
       border-bottom: 1px solid var(--border);
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+      flex-shrink: 0;
+    }
+
+    .sidebar-tab {
+      flex: 1;
+      padding: 12px 0;
+      font-size: 0.82rem;
+      font-weight: 500;
       color: var(--muted);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.15s, background 0.15s;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+    }
+
+    .sidebar-tab:hover { color: var(--text); }
+    .sidebar-tab.active { color: var(--text); border-bottom-color: var(--text); }
+
+    /* History panel */
+    .history-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
     }
 
     .history-list {
@@ -465,6 +488,182 @@
     }
 
     .sidebar-new button:hover { border-color: var(--text); color: var(--text); }
+
+    /* Edit panel */
+    .edit-panel {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .edit-panel.visible { display: flex; }
+
+    .edit-no-site {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 24px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .edit-no-site svg { width: 36px; height: 36px; opacity: 0.2; }
+    .edit-no-site p { font-size: 0.82rem; line-height: 1.6; }
+
+    /* Edit chat messages */
+    .edit-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .edit-msg {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .edit-msg-bubble {
+      padding: 9px 12px;
+      border-radius: 10px;
+      font-size: 0.83rem;
+      line-height: 1.5;
+    }
+
+    .edit-msg.user .edit-msg-bubble {
+      background: var(--text);
+      color: white;
+      border-bottom-right-radius: 3px;
+      align-self: flex-end;
+      max-width: 90%;
+    }
+
+    .edit-msg.assistant .edit-msg-bubble {
+      background: var(--light-gray);
+      color: var(--text);
+      border-bottom-left-radius: 3px;
+      align-self: flex-start;
+      max-width: 90%;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .edit-msg.assistant.applying .edit-msg-bubble {
+      color: var(--muted);
+    }
+
+    .edit-check {
+      width: 14px;
+      height: 14px;
+      color: #16a34a;
+      flex-shrink: 0;
+    }
+
+    .edit-spinner {
+      width: 12px;
+      height: 12px;
+      border: 1.5px solid var(--border);
+      border-top-color: var(--muted);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      flex-shrink: 0;
+    }
+
+    .edit-msg-time {
+      font-size: 0.7rem;
+      color: var(--muted);
+      padding: 0 4px;
+    }
+
+    .edit-msg.user .edit-msg-time { text-align: right; }
+
+    /* Edit suggestions */
+    .edit-suggestions {
+      padding: 8px 12px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .edit-suggestion {
+      padding: 5px 10px;
+      background: var(--off-white);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      font-family: inherit;
+    }
+
+    .edit-suggestion:hover {
+      background: var(--text);
+      color: white;
+      border-color: var(--text);
+    }
+
+    /* Edit input area */
+    .edit-input-area {
+      padding: 12px;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .edit-input-row {
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+    }
+
+    .edit-textarea {
+      flex: 1;
+      padding: 9px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.84rem;
+      color: var(--text);
+      background: var(--off-white);
+      font-family: inherit;
+      resize: none;
+      outline: none;
+      line-height: 1.5;
+      min-height: 40px;
+      max-height: 120px;
+      overflow-y: auto;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .edit-textarea:focus { border-color: var(--text); background: var(--white); }
+    .edit-textarea::placeholder { color: var(--muted); }
+
+    .edit-send-btn {
+      width: 36px;
+      height: 36px;
+      background: var(--text);
+      color: white;
+      border: none;
+      border-radius: 9px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .edit-send-btn:hover { background: var(--accent-hover); }
+    .edit-send-btn:active { transform: scale(0.94); }
+    .edit-send-btn:disabled { background: var(--border); cursor: not-allowed; }
+    .edit-send-btn svg { width: 15px; height: 15px; fill: white; }
 
     /* Preview pane */
     .preview-pane {
