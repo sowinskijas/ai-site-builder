@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Site Builder — AI Powered</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --white: #ffffff;
+      --off-white: #f9f9f9;
+      --light-gray: #f0f0f0;
+      --border: #e4e4e4;
+      --muted: #9a9a9a;
+      --text: #1a1a1a;
+      --text-secondary: #555;
+      --accent: #1a1a1a;
+      --accent-hover: #333;
+      --radius: 14px;
+      --radius-sm: 8px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow: 0 4px 16px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    html, body {
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--off-white);
+      color: var(--text);
+    }
+
+    /* ── LANDING ── */
+    #landing {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      background: var(--white);
+    }
+
+    .logo-mark {
+      width: 52px;
+      height: 52px;
+      background: var(--text);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+
+    .logo-mark svg {
+      width: 26px;
+      height: 26px;
+      fill: white;
+    }
+
+    #landing h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      text-align: center;
+      line-height: 1.15;
+      color: var(--text);
+      max-width: 560px;
+    }
+
+    #landing p.sub {
+      margin-top: 14px;
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      text-align: center;
+      max-width: 440px;
+      line-height: 1.6;
+    }
+
+    /* ── SEARCH BAR ── */
+    .prompt-wrapper {
+      margin-top: 44px;
+      width: 100%;
+      max-width: 680px;
+      position: relative;
+    }
+
+    .prompt-box {
+      width: 100%;
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow-lg);
+      padding: 20px 70px 20px 24px;
+      font-size: 1rem;
+      color: var(--text);
+      resize: none;
+      outline: none;
+      line-height: 1.6;
+      min-height: 72px;
+      max-height: 200px;
+      overflow-y: auto;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      font-family: inherit;
+    }
+
+    .prompt-box::placeholder { color: var(--muted); }
+    .prompt-box:focus {
+      border-color: var(--text);
+      box-shadow: var(--shadow-lg), 0 0 0 3px rgba(26,26,26,0.06);
+    }
+
+    .prompt-send {
+      position: absolute;
+      right: 14px;
+      bottom: 14px;
+      width: 40px;
+      height: 40px;
+      background: var(--text);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .prompt-send:hover { background: var(--accent-hover); }
+    .prompt-send:active { transform: scale(0.95); }
+    .prompt-send svg { width: 18px; height: 18px; fill: white; }
+
+    .prompt-hint {
+      margin-top: 12px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* Examples */
+    .examples {
+      margin-top: 32px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      max-width: 680px;
+    }
+
+    .example-chip {
+      background: var(--light-gray);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 7px 16px;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      user-select: none;
+    }
+
+    .example-chip:hover {
+      background: var(--text);
+      color: white;
+      border-color: var(--text);
+    }
+
+    /* ── API KEY AREA ── */
+    .api-section {
+      margin-top: 48px;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .api-section details {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+
+    .api-section summary {
+      padding: 12px 16px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      user-select: none;
+      background: var(--white);
+    }
+
+    .api-section summary::-webkit-details-marker { display: none; }
+
+    .api-section summary::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-right: 1.5px solid currentColor;
+      border-bottom: 1.5px solid currentColor;
+      transform: rotate(-45deg);
+      transition: transform 0.2s;
+      flex-shrink: 0;
+    }
+
+    .api-section details[open] summary::before {
+      transform: rotate(45deg);
+    }
+
+    .api-key-inner {
+      padding: 0 16px 14px;
+      background: var(--white);
+      border-top: 1px solid var(--border);
+    }
+
+    .api-key-inner p {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 10px;
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+
+    .api-key-inner a {
+      color: var(--text);
+      text-underline-offset: 2px;
+    }
+
+    .api-key-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .api-key-input {
+      flex: 1;
+      padding: 9px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      color: var(--text);
+      background: var(--off-white);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .api-key-input:focus { border-color: var(--text); background: var(--white); }
+
+    .api-key-save {
+      padding: 9px 16px;
+      background: var(--text);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+
+    .api-key-save:hover { background: var(--accent-hover); }
+
+    .api-status {
+      margin-top: 8px;
+      font-size: 0.76rem;
+      color: var(--muted);
+      min-height: 16px;
+    }
+
+    .api-status.ok { color: #16a34a; }
+    .api-status.err { color: #dc2626; }
+
+    /* ── BUILDER VIEW ── */
+    #builder {
+      display: none;
+      height: 100vh;
+      flex-direction: column;
+      background: var(--off-white);
+    }
+
+    /* Top bar */
+    .topbar {
+      height: 56px;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 16px;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .topbar-logo {
+      width: 30px;
+      height: 30px;
+      background: var(--text);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .topbar-logo svg { width: 15px; height: 15px; fill: white; }
+
+    .topbar-prompt-wrap {
+      flex: 1;
+      position: relative;
+      max-width: 600px;
+    }
+
+    .topbar-prompt {
+      width: 100%;
+      padding: 8px 44px 8px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.88rem;
+      color: var(--text);
+      background: var(--off-white);
+      outline: none;
+      font-family: inherit;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .topbar-prompt:focus { border-color: var(--text); background: var(--white); }
+
+    .topbar-send {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 30px;
+      height: 30px;
+      background: var(--text);
+      color: white;
+      border: none;
+      border-radius: 7px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+      flex-shrink: 0;
+    }
+
+    .topbar-send:hover { background: var(--accent-hover); }
+    .topbar-send svg { width: 14px; height: 14px; fill: white; }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+    }
+
+    .btn-ghost {
+      padding: 7px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.82rem;
+      background: var(--white);
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-family: inherit;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+
+    .btn-ghost:hover { border-color: var(--text); color: var(--text); }
+
+    .btn-solid {
+      padding: 7px 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      background: var(--text);
+      color: white;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+
+    .btn-solid:hover { background: var(--accent-hover); }
+
+    /* Main content */
+    .builder-body {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 280px;
+      background: var(--white);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .sidebar-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    .history-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+    }
+
+    .history-item {
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background 0.15s;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .history-item:hover { background: var(--light-gray); }
+    .history-item.active { background: var(--light-gray); }
+
+    .history-item-title {
+      font-size: 0.84rem;
+      font-weight: 500;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .history-item-time {
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .sidebar-new {
+      padding: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .sidebar-new button {
+      width: 100%;
+      padding: 9px;
+      border: 1.5px dashed var(--border);
+      border-radius: var(--radius-sm);
+      background: transparent;
+      font-size: 0.83rem;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: inherit;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .sidebar-new button:hover { border-color: var(--text); color: var(--text); }
+
+    /* Preview pane */
+    .preview-pane {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .preview-tabs {
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 2px;
+      height: 44px;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .preview-tab {
+      padding: 6px 14px;
+      border-radius: 7px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      color: var(--muted);
+      background: transparent;
+      border: none;
+      font-family: inherit;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .preview-tab:hover { color: var(--text); }
+    .preview-tab.active { background: var(--light-gray); color: var(--text); font-weight: 500; }
+
+    .preview-tab-spacer { flex: 1; }
+
+    .preview-device-btns {
+      display: flex;
+      gap: 4px;
+    }
+
+    .device-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, border-color 0.15s;
+      color: var(--muted);
+    }
+
+    .device-btn:hover, .device-btn.active { background: var(--light-gray); border-color: var(--text); color: var(--text); }
+
+    .device-btn svg { width: 14px; height: 14px; fill: currentColor; }
+
+    /* Preview frame */
+    .preview-frame-wrap {
+      flex: 1;
+      overflow: auto;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 24px;
+      background: var(--off-white);
+    }
+
+    .preview-frame-shell {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      width: 100%;
+      max-width: 1200px;
+      min-height: 500px;
+      transition: max-width 0.3s ease;
+    }
+
+    .preview-frame-shell.tablet { max-width: 768px; }
+    .preview-frame-shell.mobile { max-width: 390px; }
+
+    #preview-iframe {
+      width: 100%;
+      min-height: 600px;
+      border: none;
+      display: block;
+    }
+
+    /* Code view */
+    #code-view {
+      display: none;
+      flex: 1;
+      overflow: auto;
+      padding: 24px;
+    }
+
+    #code-view pre {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-all;
+      overflow: visible;
+    }
+
+    /* Loading state */
+    .generating-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.92);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 10;
+      border-radius: var(--radius);
+      backdrop-filter: blur(4px);
+    }
+
+    .generating-overlay.hidden { display: none; }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+      border: 2.5px solid var(--border);
+      border-top-color: var(--text);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .generating-label {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .generating-sub {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    /* Empty state */
+    .empty-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: var(--muted);
+      padding: 40px;
+      text-align: center;
+    }
+
+    .empty-state svg {
+      width: 48px;
+      height: 48px;
+      opacity: 0.2;
+    }
+
+    .empty-state p { font-size: 0.9rem; max-width: 280px; line-height: 1.6; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--text);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      box-shadow: var(--shadow-lg);
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* Responsive */
+    @media (max-width: 700px) {
+      .sidebar { display: none; }
+      .topbar-prompt-wrap { max-width: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ LANDING PAGE ══ -->
+<div id="landing">
+  <div class="logo-mark">
+    <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+  </div>
+
+  <h1>Build any website<br>with a single sentence.</h1>
+  <p class="sub">Describe what you want and watch your site appear. Powered by Claude AI — no code required.</p>
+
+  <div class="prompt-wrapper">
+    <textarea
+      id="landing-prompt"
+      class="prompt-box"
+      placeholder="A modern landing page for a coffee shop with a warm color palette, menu section, and contact form…"
+      rows="2"
+    ></textarea>
+    <button class="prompt-send" id="landing-send" title="Generate site">
+      <svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2L15 22 11 13 2 9l20-7z"/></svg>
+    </button>
+  </div>
+
+  <p class="prompt-hint">Press Enter or click the arrow to generate &nbsp;·&nbsp; Shift+Enter for new line</p>
+
+  <div class="examples">
+    <span class="example-chip">☕ Coffee shop landing page</span>
+    <span class="example-chip">💼 Freelance portfolio</span>
+    <span class="example-chip">🏋️ Gym & fitness studio</span>
+    <span class="example-chip">🍕 Restaurant with menu</span>
+    <span class="example-chip">🛍️ Product launch page</span>
+    <span class="example-chip">🏡 Real estate listing</span>
+  </div>
+
+  <div class="api-section">
+    <details id="api-details">
+      <summary>
+        <span id="api-summary-text">⚙︎ &nbsp;Set your Anthropic API key</span>
+      </summary>
+      <div class="api-key-inner">
+        <p>
+          Your key is stored only in your browser and sent directly to Anthropic — never to any server.<br>
+          Get one free at <a href="https://console.anthropic.com" target="_blank" rel="noopener">console.anthropic.com</a>.
+        </p>
+        <div class="api-key-row">
+          <input
+            type="password"
+            id="api-key-input"
+            class="api-key-input"
+            placeholder="sk-ant-api03-…"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button class="api-key-save" id="api-key-save">Save</button>
+        </div>
+        <div class="api-status" id="api-status"></div>
+      </div>
+    </details>
+  </div>
+</div>
+
+<!-- ══ BUILDER APP ══ -->
+<div id="builder">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="topbar-logo" id="back-to-home" style="cursor:pointer;" title="Back to home">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    </div>
+
+    <div class="topbar-prompt-wrap">
+      <input
+        type="text"
+        id="topbar-prompt"
+        class="topbar-prompt"
+        placeholder="Describe a change or a new site…"
+      />
+      <button class="topbar-send" id="topbar-send" title="Generate">
+        <svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2L15 22 11 13 2 9l20-7z"/></svg>
+      </button>
+    </div>
+
+    <div class="topbar-actions">
+      <button class="btn-ghost" id="btn-new">New site</button>
+      <button class="btn-solid" id="btn-download">Download HTML</button>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="builder-body">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-header">History</div>
+      <div class="history-list" id="history-list"></div>
+      <div class="sidebar-new">
+        <button id="sidebar-new-btn">+ New site</button>
+      </div>
+    </div>
+
+    <!-- Preview -->
+    <div class="preview-pane">
+      <div class="preview-tabs">
+        <button class="preview-tab active" id="tab-preview">Preview</button>
+        <button class="preview-tab" id="tab-code">Code</button>
+        <div class="preview-tab-spacer"></div>
+        <div class="preview-device-btns">
+          <button class="device-btn active" id="dev-desktop" title="Desktop">
+            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          </button>
+          <button class="device-btn" id="dev-tablet" title="Tablet">
+            <svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><circle cx="12" cy="18" r="1"/></svg>
+          </button>
+          <button class="device-btn" id="dev-mobile" title="Mobile">
+            <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="18" r="1"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Preview frame -->
+      <div class="preview-frame-wrap" id="preview-wrap">
+        <div class="preview-frame-shell" id="frame-shell">
+          <div class="generating-overlay hidden" id="gen-overlay">
+            <div class="spinner"></div>
+            <div class="generating-label" id="gen-label">Generating your site…</div>
+            <div class="generating-sub" id="gen-sub">This usually takes 5–15 seconds</div>
+          </div>
+          <div class="empty-state" id="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+              <rect x="3" y="3" width="18" height="18" rx="3"/>
+              <path d="M3 9h18M9 21V9"/>
+            </svg>
+            <p>Your generated site will appear here. Type a description above to get started.</p>
+          </div>
+          <iframe id="preview-iframe" style="display:none;" sandbox="allow-scripts allow-same-origin"></iframe>
+        </div>
+      </div>
+
+      <!-- Code view -->
+      <div id="code-view">
+        <pre id="code-pre"></pre>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── State ──
+  let apiKey = localStorage.getItem('sb_api_key') || '';
+  let history = JSON.parse(localStorage.getItem('sb_history') || '[]');
+  let currentCode = '';
+  let isGenerating = false;
+
+  // ── API Key ──
+  const apiKeyInput = document.getElementById('api-key-input');
+  const apiStatus   = document.getElementById('api-status');
+  const apiSummaryText = document.getElementById('api-summary-text');
+
+  function updateApiSummary() {
+    if (apiKey) {
+      const masked = apiKey.slice(0, 10) + '…' + apiKey.slice(-4);
+      apiSummaryText.textContent = '✓  API key saved (' + masked + ')';
+    } else {
+      apiSummaryText.textContent = '⚙︎  Set your Anthropic API key';
+    }
+  }
+
+  if (apiKey) {
+    apiKeyInput.value = apiKey;
+    updateApiSummary();
+  }
+
+  document.getElementById('api-key-save').addEventListener('click', () => {
+    const val = apiKeyInput.value.trim();
+    if (!val) {
+      showApiStatus('Enter a key first.', 'err');
+      return;
+    }
+    if (!val.startsWith('sk-ant-')) {
+      showApiStatus('Key should start with sk-ant-…', 'err');
+      return;
+    }
+    apiKey = val;
+    localStorage.setItem('sb_api_key', apiKey);
+    showApiStatus('Saved!', 'ok');
+    updateApiSummary();
+    setTimeout(() => document.getElementById('api-details').removeAttribute('open'), 800);
+  });
+
+  function showApiStatus(msg, type) {
+    apiStatus.textContent = msg;
+    apiStatus.className = 'api-status ' + (type || '');
+  }
+
+  // ── Landing ──
+  const landingPrompt = document.getElementById('landing-prompt');
+  const landingSend   = document.getElementById('landing-send');
+
+  // Example chips
+  document.querySelectorAll('.example-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      landingPrompt.value = chip.textContent.replace(/^[^\w]+/, '').trim();
+      landingPrompt.focus();
+    });
+  });
+
+  landingPrompt.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      triggerGenerate(landingPrompt.value.trim());
+    }
+  });
+
+  landingSend.addEventListener('click', () => triggerGenerate(landingPrompt.value.trim()));
+
+  // ── Builder ──
+  const topbarPrompt = document.getElementById('topbar-prompt');
+  const topbarSend   = document.getElementById('topbar-send');
+
+  topbarPrompt.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      triggerGenerate(topbarPrompt.value.trim());
+    }
+  });
+
+  topbarSend.addEventListener('click', () => triggerGenerate(topbarPrompt.value.trim()));
+
+  document.getElementById('back-to-home').addEventListener('click', showLanding);
+  document.getElementById('btn-new').addEventListener('click', newSite);
+  document.getElementById('sidebar-new-btn').addEventListener('click', newSite);
+
+  document.getElementById('btn-download').addEventListener('click', () => {
+    if (!currentCode) { showToast('Nothing to download yet.'); return; }
+    const blob = new Blob([currentCode], { type: 'text/html' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'my-site.html';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    showToast('Downloaded!');
+  });
+
+  // Tabs
+  const tabPreview = document.getElementById('tab-preview');
+  const tabCode    = document.getElementById('tab-code');
+  const previewWrap = document.getElementById('preview-wrap');
+  const codeView   = document.getElementById('code-view');
+
+  tabPreview.addEventListener('click', () => {
+    tabPreview.classList.add('active');
+    tabCode.classList.remove('active');
+    previewWrap.style.display = 'flex';
+    codeView.style.display = 'none';
+  });
+
+  tabCode.addEventListener('click', () => {
+    tabCode.classList.add('active');
+    tabPreview.classList.remove('active');
+    previewWrap.style.display = 'none';
+    codeView.style.display = 'block';
+  });
+
+  // Device buttons
+  const frameShell = document.getElementById('frame-shell');
+  document.querySelectorAll('.device-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      frameShell.className = 'preview-frame-shell';
+      if (btn.id === 'dev-tablet') frameShell.classList.add('tablet');
+      if (btn.id === 'dev-mobile') frameShell.classList.add('mobile');
+    });
+  });
+
+  // ── Generate ──
+  async function triggerGenerate(prompt) {
+    if (!prompt) { showToast('Type a description first.'); return; }
+    if (!apiKey) {
+      showToast('Add your API key first (⚙︎ below).');
+      document.getElementById('api-details').setAttribute('open', '');
+      return;
+    }
+    if (isGenerating) return;
+
+    showBuilder();
+    topbarPrompt.value = prompt;
+    await generate(prompt);
+  }
+
+  async function generate(prompt) {
+    isGenerating = true;
+    setGenerating(true);
+    currentCode = '';
+
+    const systemPrompt = `You are an expert web developer. Generate a complete, beautiful, self-contained HTML page based on the user's description.
+
+REQUIREMENTS:
+- Output ONLY raw HTML — no markdown fences, no explanation, no comments outside the HTML
+- Single file: embed all CSS in <style> tags and all JS in <script> tags
+- Use modern, clean design — good typography, spacing, visual hierarchy
+- Make it fully responsive (mobile-first)
+- Use a coherent color palette — derive it from the request
+- Include realistic placeholder content relevant to the site's purpose
+- Smooth hover effects and subtle transitions
+- No external dependencies, no CDN links — pure HTML/CSS/JS only
+- The page must look polished and professional, like a real website`;
+
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        body: JSON.stringify({
+          model: 'claude-opus-4-5',
+          max_tokens: 8192,
+          stream: true,
+          system: systemPrompt,
+          messages: [{ role: 'user', content: prompt }],
+        }),
+      });
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        const msg = err?.error?.message || 'API error ' + response.status;
+        if (response.status === 401) throw new Error('Invalid API key. Check your key and try again.');
+        throw new Error(msg);
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop();
+
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const data = line.slice(6).trim();
+          if (data === '[DONE]') continue;
+          try {
+            const parsed = JSON.parse(data);
+            if (parsed.type === 'content_block_delta' && parsed.delta?.type === 'text_delta') {
+              currentCode += parsed.delta.text;
+            }
+          } catch {}
+        }
+      }
+
+      if (!currentCode) throw new Error('No content returned. Try again.');
+
+      // Strip any markdown code fences if model included them
+      currentCode = currentCode
+        .replace(/^```html\s*/i, '')
+        .replace(/^```\s*/i, '')
+        .replace(/\s*```$/, '')
+        .trim();
+
+      renderPreview(currentCode);
+      saveToHistory(prompt, currentCode);
+      renderHistory();
+
+    } catch (err) {
+      setGenerating(false);
+      isGenerating = false;
+      showToast('Error: ' + err.message);
+      return;
+    }
+
+    setGenerating(false);
+    isGenerating = false;
+  }
+
+  function renderPreview(html) {
+    const iframe = document.getElementById('preview-iframe');
+    const empty  = document.getElementById('empty-state');
+    empty.style.display = 'none';
+    iframe.style.display = 'block';
+    iframe.srcdoc = html;
+
+    // Auto-resize iframe to content height
+    iframe.onload = () => {
+      try {
+        const h = iframe.contentDocument.documentElement.scrollHeight;
+        iframe.style.height = Math.max(h, 500) + 'px';
+      } catch {}
+    };
+
+    // Code view
+    document.getElementById('code-pre').textContent = html;
+  }
+
+  function setGenerating(on) {
+    const overlay = document.getElementById('gen-overlay');
+    if (on) {
+      overlay.classList.remove('hidden');
+    } else {
+      overlay.classList.add('hidden');
+    }
+  }
+
+  // ── History ──
+  function saveToHistory(prompt, code) {
+    const entry = {
+      id: Date.now(),
+      prompt,
+      code,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    };
+    history.unshift(entry);
+    if (history.length > 20) history = history.slice(0, 20);
+    localStorage.setItem('sb_history', JSON.stringify(history));
+  }
+
+  function renderHistory() {
+    const list = document.getElementById('history-list');
+    list.innerHTML = '';
+    if (!history.length) {
+      list.innerHTML = '<div style="padding:16px;font-size:0.8rem;color:var(--muted);">No history yet.</div>';
+      return;
+    }
+    history.forEach((entry, i) => {
+      const item = document.createElement('div');
+      item.className = 'history-item' + (i === 0 ? ' active' : '');
+      item.innerHTML = `
+        <div class="history-item-title">${escapeHtml(entry.prompt)}</div>
+        <div class="history-item-time">${entry.time}</div>
+      `;
+      item.addEventListener('click', () => {
+        document.querySelectorAll('.history-item').forEach(el => el.classList.remove('active'));
+        item.classList.add('active');
+        currentCode = entry.code;
+        renderPreview(entry.code);
+        topbarPrompt.value = entry.prompt;
+      });
+      list.appendChild(item);
+    });
+  }
+
+  // ── View toggles ──
+  function showLanding() {
+    document.getElementById('landing').style.display = 'flex';
+    document.getElementById('builder').style.display = 'none';
+  }
+
+  function showBuilder() {
+    document.getElementById('landing').style.display = 'none';
+    document.getElementById('builder').style.display = 'flex';
+    renderHistory();
+  }
+
+  function newSite() {
+    topbarPrompt.value = '';
+    currentCode = '';
+    document.getElementById('preview-iframe').style.display = 'none';
+    document.getElementById('preview-iframe').srcdoc = '';
+    document.getElementById('empty-state').style.display = 'flex';
+    document.getElementById('code-pre').textContent = '';
+    topbarPrompt.focus();
+    document.querySelectorAll('.history-item').forEach(el => el.classList.remove('active'));
+  }
+
+  // ── Toast ──
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  // ── Utils ──
+  function escapeHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // ── Init ──
+  updateApiSummary();
+
+  // If there's history, offer to restore
+  if (history.length) {
+    renderHistory();
+  }
+</script>
+</body>
+</html>
