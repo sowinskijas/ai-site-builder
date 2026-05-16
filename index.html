@@ -1078,6 +1078,20 @@
   let currentCode = '';
   let isGenerating = false;
 
+  // Prompt cache — keyed by normalized prompt, max 15 entries
+  const CACHE_KEY = 'sb_cache';
+  function loadCache() { try { return JSON.parse(localStorage.getItem(CACHE_KEY) || '{}'); } catch { return {}; } }
+  function saveCache(c) { try { localStorage.setItem(CACHE_KEY, JSON.stringify(c)); } catch {} }
+  function cacheKey(prompt) { return prompt.trim().toLowerCase().replace(/\s+/g, ' '); }
+  function getCached(prompt) { return loadCache()[cacheKey(prompt)] || null; }
+  function setCached(prompt, html) {
+    const c = loadCache();
+    c[cacheKey(prompt)] = html;
+    const keys = Object.keys(c);
+    if (keys.length > 15) delete c[keys[0]]; // evict oldest
+    saveCache(c);
+  }
+
   // ── API Key ──
   const apiKeyInput = document.getElementById('api-key-input');
   const apiStatus   = document.getElementById('api-status');
