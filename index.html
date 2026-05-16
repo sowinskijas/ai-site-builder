@@ -1404,6 +1404,22 @@ Rules:
 
     showBuilder();
     topbarPrompt.value = prompt;
+
+    const cached = getCached(prompt);
+    if (cached) {
+      currentCode = cached;
+      renderPreview(cached);
+      saveToHistory(prompt, cached);
+      renderHistory();
+      showEditReady();
+      document.getElementById('stab-edit').classList.add('active');
+      document.getElementById('stab-history').classList.remove('active');
+      document.getElementById('edit-panel').style.display = 'flex';
+      document.getElementById('history-panel').style.display = 'none';
+      showToast('Loaded from cache — no credits used.');
+      return;
+    }
+
     await generate(prompt);
   }
 
