@@ -1554,6 +1554,7 @@ The final result should be indistinguishable from a real, live professional webs
         .replace(/\s*```$/, '')
         .trim();
 
+      setCached(prompt, currentCode);
       renderPreview(currentCode);
       saveToHistory(prompt, currentCode);
       renderHistory();
