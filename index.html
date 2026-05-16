@@ -1564,12 +1564,40 @@ The final result should be indistinguishable from a real, live professional webs
     document.getElementById('code-pre').textContent = html;
   }
 
+  let genBarInterval = null;
+
   function setGenerating(on) {
-    const overlay = document.getElementById('gen-overlay');
+    const overlay  = document.getElementById('gen-overlay');
+    const fill     = document.getElementById('gen-bar-fill');
+    const percent  = document.getElementById('gen-percent');
+    const label    = document.getElementById('gen-label');
+
     if (on) {
       overlay.classList.remove('hidden');
+      let pct = 0;
+      fill.style.transition = 'none';
+      fill.style.width = '0%';
+      percent.textContent = '0%';
+      label.textContent = 'Generating your site…';
+
+      // Ease up to ~90% over ~18s, slowing as it approaches
+      genBarInterval = setInterval(() => {
+        const remaining = 90 - pct;
+        pct += remaining * 0.04;
+        if (pct > 89.5) pct = 89.5;
+        fill.style.transition = 'width 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+        fill.style.width = pct + '%';
+        percent.textContent = Math.round(pct) + '%';
+      }, 400);
     } else {
-      overlay.classList.add('hidden');
+      clearInterval(genBarInterval);
+      genBarInterval = null;
+      // Snap to 100% then hide
+      fill.style.transition = 'width 0.3s ease';
+      fill.style.width = '100%';
+      percent.textContent = '100%';
+      label.textContent = 'Done!';
+      setTimeout(() => overlay.classList.add('hidden'), 500);
     }
   }
 
