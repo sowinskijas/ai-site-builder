@@ -1042,9 +1042,11 @@
       <div class="preview-frame-wrap" id="preview-wrap">
         <div class="preview-frame-shell" id="frame-shell">
           <div class="generating-overlay hidden" id="gen-overlay">
-            <div class="spinner"></div>
-            <div class="generating-label" id="gen-label">Generating your site…</div>
-            <div class="generating-sub" id="gen-sub">This usually takes 5–15 seconds</div>
+            <div class="gen-label" id="gen-label">Generating your site…</div>
+            <div class="gen-bar-wrap">
+              <div class="gen-bar-fill" id="gen-bar-fill"></div>
+            </div>
+            <div class="gen-percent" id="gen-percent">0%</div>
           </div>
           <div class="empty-state" id="empty-state">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
